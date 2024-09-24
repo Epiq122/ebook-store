@@ -1,10 +1,15 @@
-import { add } from '@/test/math';
+import express from 'express';
 
-const a = 1;
-const b = 2;
+const app = express();
+const port = process.env.PORT || 8989;
 
-// log the sum of a and b to the console
-console.log(a + b);
+app.get('/', (req, res) => {
+  res.send('welcome to my nightmare');
+});
+app.get('/about', (req, res) => {
+  res.send('welcome to my nightmare thats about');
+});
 
-// log the result of the add function to the console
-console.log('this is from the math.ts' + ' ' + add(a, b));
+app.listen(port, () => {
+  console.log(`server running on port http://localhost:${port}`);
+});
