@@ -1,14 +1,10 @@
 import express from 'express';
+import authRouter from './routes/auth';
 
 const app = express();
-const port = process.env.PORT || 8989;
+app.use('/auth', authRouter);
 
-app.get('/', (req, res) => {
-  res.send('welcome to my nightmare');
-});
-app.get('/about', (req, res) => {
-  res.send('welcome to my nightmare thats about');
-});
+const port = process.env.PORT || 8989;
 
 app.listen(port, () => {
   console.log(`server running on port http://localhost:${port}`);
