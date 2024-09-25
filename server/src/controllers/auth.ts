@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import VerificationTokenModel from '@/models/verificationToken';
 import UserModel from '@/models/user';
@@ -35,7 +36,30 @@ export const generateAuthLink: RequestHandler = async (req, res) => {
     token,
   });
 
+  // Looking to send emails in production? Check out our Email API/SMTP product!
+  const transport = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const link = `http://localhost:8989/auth/verify?token=${token}&userId=${userId}`;
+
+  await transport.sendMail({
+    to: user.email,
+    from: 'robprojects122@gmail.com',
+    subject: 'Verify your email',
+    html: `
+    <div>
+           <p>Please click on <a href="${link}">this link </a> to verify your email address.</p>
+    </div>
+    `,
+  });
+
   console.log(req.body);
 
-  res.json({ ok: true });
+  res.json({ message: 'please check your email for verification link' });
 };
