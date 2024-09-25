@@ -1,7 +1,9 @@
 import { RequestHandler } from 'express';
 import crypto from 'crypto';
+import VerificationTokenModel from '@/models/verificationToken';
+import UserModel from '@/models/user';
 
-export const generateAuthLink: RequestHandler = (req, res) => {
+export const generateAuthLink: RequestHandler = async (req, res) => {
   // generate auth link
   // send link to the users email
 
@@ -13,10 +15,18 @@ export const generateAuthLink: RequestHandler = (req, res) => {
   5. user clicks on the link and is redirected to the login page
  */
 
-  //1.
-  const token = crypto.randomBytes(36).toString('hex');
+  const { email } = req.body;
+  let user = await UserModel.findOne({ email });
 
-  //2.
+  if (!user) {
+    user = await UserModel.create({ email });
+  }
+
+  const token = crypto.randomBytes(36).toString('hex');
+  await VerificationTokenModel.create<{ userId: string }>({
+    userId: user._id.toString(),
+    token,
+  });
 
   console.log(req.body);
 
